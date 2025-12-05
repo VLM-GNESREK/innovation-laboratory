@@ -3,13 +3,17 @@ package at.technikumwien.qds.model;
 public class Photon implements QuantumObject
 {
     private String id;
+<<<<<<< HEAD
     private double probabilityPathA;
     private double probabilityPathB;
     private String actualPath;
+=======
+>>>>>>> 3a8f417fc65f55dba12156ae86749d49b32dc2a2
 
     public Photon(String id)
     {
         this.id = id;
+<<<<<<< HEAD
         this.probabilityPathA = 1.0; //licht wird gestrahlt, startet auf path A
         this.probabilityPathB= 0.0;
         this.actualPath="A";
@@ -39,4 +43,8 @@ public class Photon implements QuantumObject
     public double getProbPathB(){ return probabilityPathB; }
 
 
+=======
+        System.out.println("Photon " + id + "created.");
+    }
+>>>>>>> 3a8f417fc65f55dba12156ae86749d49b32dc2a2
 }

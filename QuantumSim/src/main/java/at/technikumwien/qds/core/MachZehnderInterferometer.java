@@ -1,6 +1,7 @@
 package at.technikumwien.qds.core;
 
 import at.technikumwien.qds.model.QuantumObject;
+<<<<<<< HEAD
 import at.technikumwien.qds.model.Photon;
 
 public class MachZehnderInterferometer implements Interferometer
@@ -50,5 +51,14 @@ public class MachZehnderInterferometer implements Interferometer
         TotalStat=0;
         detectorA.reset();
         detectorB.reset();
+=======
+
+public class MachZehnderInterferometer implements Interferometer
+{
+    @Override
+    public void runExperiment(QuantumObject input)
+    {
+        System.out.println("Running Mach-Zehnder simulation...");
+>>>>>>> 3a8f417fc65f55dba12156ae86749d49b32dc2a2
     }
 }
