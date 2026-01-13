@@ -14,7 +14,6 @@ public class Bomb implements QuantumObject {
 
     /**
      * Eine funktionierende Bombe detektiert das Photon und explodiert.
-     * Eine defekte Bombe (Blindgänger) interagiert nicht mit dem Photon.
      */
     public boolean checkPhotonInteraction() {
         if (isLive) {

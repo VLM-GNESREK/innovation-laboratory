@@ -4,88 +4,97 @@ import at.technikumwien.qds.model.Bomb;
 import at.technikumwien.qds.model.Photon;
 import at.technikumwien.qds.model.QuantumObject;
 
+public class BombTesterInterferometer implements Interferometer
+{
 
-public class BombTesterInterferometer implements Interferometer {
+    private final Detector detectorC;  // "Safe" detector (Path A)
+    private final Detector detectorD;  // "Bomb" detector (Path B) - The "dark" port
 
-    private Detector detectorC;  // "safe" detector
-    private Detector detectorD;  // "bomb path" detector
-
-    // Statistiken
+    // Stats
     private int bombsExploded = 0;
-    private int bombsIdentifiedSafely = 0;  // Interaction-free!
+    private int bombsIdentifiedSafely = 0;
     private int inconclusiveResults = 0;
     private int dudsDetected = 0;
     private int totalTests = 0;
 
-    public BombTesterInterferometer() {
-        this.detectorC = new Detector("Detector C (Safe)", Detector.PathType.PathA);
-        this.detectorD = new Detector("Detector D (Bomb Path)", Detector.PathType.PathB);
+    public BombTesterInterferometer()
+    {
+        this.detectorC = new Detector("Detector C", Detector.PathType.PathA);
+        this.detectorD = new Detector("Detector D", Detector.PathType.PathB);
     }
 
     @Override
-    public void runExperiment(QuantumObject input) {
-        if (!(input instanceof Bomb bomb)) {
+    public void runExperiment(QuantumObject input)
+    {
+        if (!(input instanceof Bomb bomb))
+        {
             System.out.println("Error: Bomb Tester requires a Bomb object!");
             return;
         }
 
-        System.out.println("\n--- Testing " + bomb.getId() + " ---");
-
-        // erstellt Photon für den Test
+        totalTests++;
         Photon photon = new Photon("Test-Photon-" + totalTests);
 
-        // erster Beam Splitter teilt das Photon
-        photon.BeamSplitter();
+        // Superposition
+        photon.applyBeamSplitter();
 
-        // check ob Photon den Bomb-Pfad nimmt
-        boolean photonInBombPath = photon.detectInPathB();
+        // Bomb Interaction
+        boolean photonSurvives = true;
 
-        if (photonInBombPath) {
-            // Photon ist in Path B, dort wo die Bombe ist
-            boolean bombInteracted = bomb.checkPhotonInteraction();
+        if (bomb.isLive())
+        {
+            // Check
+            String path = photon.measure();
 
-            if (bombInteracted) {
-                // LIVE Bombe: explodiert
+            if (path.equals("B"))
+            {
                 bombsExploded++;
-                System.out.println("Result: BOMB EXPLODED");
-            } else {
-                // DUD: Photon passiert ungestört
-                // Geht zum zweiten Beam Splitter
-                System.out.println("Result: No explosion - bomb is DUD");
-                dudsDetected++;
+                photonSurvives = false;
             }
-        } else {
-            // Photon ist in Path A, der sichere Path
-
-            if (bomb.isLive()) {
-                // LIVE Bombe: Interferenz wird zerstört
-                // Photon verhält sich wie normales teilchen
-                // 50/50 Chance für Detector C oder D
-
-                if (Math.random() < 0.5) {
-                    detectorC.detect(photon);
-                    System.out.println("Result: Detector C fired - INCONCLUSIVE (could be live or dud)");
-                    inconclusiveResults++;
-                } else {
-                    // Detector D feuert -> Bbombe ist live!
-                    // ohne dass sie explodiert ist!
-                    System.out.println("Result: Detector D fired - BOMB IS LIVE (interaction-free measurement!)");
-                    bombsIdentifiedSafely++;
-                }
-
-            } else {
-                // DUD: Perfekte Interferenz
-                // Nur Detector C feuert (destruktive Interferenz bei D)
-                detectorC.detect(photon);
-                System.out.println("Result: Detector C fired due to interference - bomb is DUD");
-                dudsDetected++;
+            else
+            {
             }
         }
+        else
+        {
+        }
 
-        totalTests++;
+        if (!photonSurvives) return;
+
+        photon.applyBeamSplitter();
+
+        String finalResult = photon.measure();
+
+        // Interpret Results
+        if (bomb.isLive())
+        {
+            if (finalResult.equals("B"))
+            {
+                bombsIdentifiedSafely++;
+                detectorD.feed(finalResult);
+            }
+            else
+            {
+                inconclusiveResults++;
+                detectorC.feed(finalResult);
+            }
+        }
+        else
+        {
+            if (finalResult.equals("A"))
+            {
+                dudsDetected++;
+                detectorC.feed(finalResult);
+            }
+            else
+            {
+                detectorD.feed(finalResult); // Shouldn't happen ideally
+            }
+        }
     }
 
-    public void printStats() {
+    public void printStats()
+    {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("Elitzur-Vaidman bomb tester statistic");
         System.out.println("=".repeat(60));
@@ -95,23 +104,12 @@ public class BombTesterInterferometer implements Interferometer {
         System.out.println("  - Identified safely (interaction-free!): " + bombsIdentifiedSafely);
         System.out.println("  - Inconclusive: " + inconclusiveResults);
         System.out.println("\nDuds identified: " + dudsDetected);
-
-        if (totalTests > 0) {
-            double successRate = (double) bombsIdentifiedSafely / totalTests * 100;
-            System.out.println("\nInteraction-free success rate: " + String.format("%.1f%%", successRate));
-        }
-
-        System.out.println("\n" + "=".repeat(60));
-        System.out.println("QUANTUM PARADOX:");
-        System.out.println("We identified " + bombsIdentifiedSafely + " live bombs");
-        System.out.println("WITHOUT triggering them!");
-        System.out.println("=".repeat(60));
-
         detectorC.printStats();
         detectorD.printStats();
     }
 
-    public void resetStats() {
+    public void resetStats()
+    {
         bombsExploded = 0;
         bombsIdentifiedSafely = 0;
         inconclusiveResults = 0;
@@ -119,13 +117,5 @@ public class BombTesterInterferometer implements Interferometer {
         totalTests = 0;
         detectorC.reset();
         detectorD.reset();
-    }
-
-    public int getBombsIdentifiedSafely() {
-        return bombsIdentifiedSafely;
-    }
-
-    public int getBombsExploded() {
-        return bombsExploded;
     }
 }
