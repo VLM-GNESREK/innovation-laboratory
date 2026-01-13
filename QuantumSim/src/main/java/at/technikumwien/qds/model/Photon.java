@@ -1,50 +1,25 @@
 package at.technikumwien.qds.model;
 
-public class Photon implements QuantumObject
-{
-    private String id;
-<<<<<<< HEAD
-    private double probabilityPathA;
-    private double probabilityPathB;
-    private String actualPath;
-=======
->>>>>>> 3a8f417fc65f55dba12156ae86749d49b32dc2a2
+public class Photon implements QuantumObject {
 
-    public Photon(String id)
-    {
+    // probabilityPathA/B entfernt, im code nicht verwendet
+    private final String id;
+    private String actualPath = "A";
+
+    public Photon(String id) {
         this.id = id;
-<<<<<<< HEAD
-        this.probabilityPathA = 1.0; //licht wird gestrahlt, startet auf path A
-        this.probabilityPathB= 0.0;
-        this.actualPath="A";
-        System.out.println( id + " created.");
+        System.out.println(id + " created.");
     }
 
-    public void BeamSplitter(){
-        this.probabilityPathA = 0.5; //nach dem splitter wird es aufgeteilt
-        this.probabilityPathB = 0.5;
-
-        if  (Math.random() < 0.5){ //photon entscheidet sich fuer einen Path
-            actualPath="A";
-        } else {
-            actualPath="B";
-        }
-
+    public void BeamSplitter() {
+        actualPath = Math.random() < 0.5 ? "A" : "B";
     }
 
-    public boolean detectInPathA(){
-        return actualPath.equals("A");
-    }
-    public boolean detectInPathB(){
-        return actualPath.equals("B");
+    public boolean detectInPathA() {
+        return "A".equals(actualPath);
     }
 
-    public double getProbPathA(){ return probabilityPathA; }
-    public double getProbPathB(){ return probabilityPathB; }
-
-
-=======
-        System.out.println("Photon " + id + "created.");
+    public boolean detectInPathB() {
+        return "B".equals(actualPath);
     }
->>>>>>> 3a8f417fc65f55dba12156ae86749d49b32dc2a2
 }
