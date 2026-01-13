@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import at.technikumwien.qds.ui.QuantumVisualizer;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -81,52 +82,52 @@ public class VisualizationApp extends Application
 
     /**
      * View for Bomb Tester
-     */
-    private VBox createBombTesterView()
+     **/
+
+    private BorderPane createBombTesterView()
     {
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(15));
+        BorderPane root = new BorderPane();
+        root.setPadding(new Insets(15));
 
-        Label title = new Label("Experiment 2: Elitzur-Vaidman Bomb Tester");
+        VBox controls = new VBox(10);
+        controls.setPrefWidth(300);
+
+        Label title = new Label("Experiment 2: Bomb Tester");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-
-        Label desc = new Label("Can we detect a bomb without exploding it? 'Interaction-Free Measurement'.");
 
         TextArea outputArea = createOutputArea();
 
-        // Options
-        ComboBox<String> modeSelect = new ComboBox<>();
-        modeSelect.getItems().addAll("10 Live Bombs", "10 Duds", "Mixed Batch (50/50)");
-        modeSelect.getSelectionModel().selectFirst();
+        Button runSingleBtn = new Button("Test Single Random Bomb");
 
-        Button runBtn = new Button("Test Bombs");
+        controls.getChildren().addAll(title, runSingleBtn, outputArea);
 
-        runBtn.setOnAction(e ->
+        QuantumVisualizer visualizer = new QuantumVisualizer(600, 450);
+
+        runSingleBtn.setOnAction(e ->
         {
             redirectOutput(outputArea);
             outputArea.clear();
 
-            String mode = modeSelect.getValue();
             BombTesterInterferometer tester = new BombTesterInterferometer();
 
-            System.out.println("Running Mode: " + mode);
+            boolean isLive = Math.random() < 0.5; // 50% chance bomb is live
+            Bomb bomb = new Bomb("Visual-Bomb", isLive);
 
-            int count = 10;
-            if (mode.contains("Mixed")) count = 50;
-
-            for (int i = 0; i < count; i++)
-            {
-                boolean isLive = true;
-                if (mode.contains("Duds")) isLive = false;
-                if (mode.contains("Mixed")) isLive = Math.random() < 0.5;
-
-                tester.runExperiment(new Bomb("Bomb-" + i, isLive));
-            }
+            tester.runExperiment(bomb);
             tester.printStats();
+
+            boolean exploded = bomb.getStatus().equals("EXPLODED");
+
+            String path = "A"; // Default Safe
+            if (tester.getBombsIdentifiedSafely() > 0) path = "B";
+
+            // Trigger Animation
+            visualizer.playAnimation("BOMB", path, exploded, isLive);
         });
 
-        layout.getChildren().addAll(title, desc, modeSelect, runBtn, outputArea);
-        return layout;
+        root.setLeft(controls);
+        root.setCenter(visualizer);
+        return root;
     }
 
     /**

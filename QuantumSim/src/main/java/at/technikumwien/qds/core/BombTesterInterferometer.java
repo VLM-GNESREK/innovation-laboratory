@@ -121,4 +121,18 @@ public class BombTesterInterferometer implements Interferometer
         detectorC.reset();
         detectorD.reset();
     }
+    public int getBombsIdentifiedSafely()
+    {
+        return bombsIdentifiedSafely;
+    }
+
+    public int getBombsExploded()
+    {
+        return bombsExploded;
+    }
+
+    public int getTotalTests()
+    {
+        return totalTests;
+    }
 }
