@@ -2,7 +2,7 @@ package at.technikumwien.qds.model;
 
 public class Photon implements QuantumObject {
 
-    // probabilityPathA/B entfernt, im code nicht verwendet
+    //probabilityPathA/B entfernt, im code nicht verwendet
     private final String id;
     private String actualPath = "A";
 

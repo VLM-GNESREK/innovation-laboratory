@@ -1,4 +1,4 @@
-package techikum-wien.at;
+package at.technikumwien.qds;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
