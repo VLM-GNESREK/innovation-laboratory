@@ -65,4 +65,21 @@ public class Photon implements QuantumObject
     {
         return String.format("A: %s, B: %s", amplitudeA, amplitudeB);
     }
+
+    /**
+     * Forces the photon into a specific path. (Wavefunction Collapse)
+     */
+    public void collapseToPath(String path)
+    {
+        if (path.equals("A"))
+        {
+            this.amplitudeA = Complex.ONE;
+            this.amplitudeB = Complex.ZERO;
+        }
+        else
+        {
+            this.amplitudeA = Complex.ZERO;
+            this.amplitudeB = Complex.ONE;
+        }
+    }
 }

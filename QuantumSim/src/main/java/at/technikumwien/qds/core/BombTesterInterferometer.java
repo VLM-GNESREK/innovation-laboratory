@@ -43,20 +43,23 @@ public class BombTesterInterferometer implements Interferometer
 
         if (bomb.isLive())
         {
-            // Check
+            // Check if photon hits the bomb
             String path = photon.measure();
 
             if (path.equals("B"))
             {
+                // EXPLOSION
+                bomb.checkPhotonInteraction();
                 bombsExploded++;
                 photonSurvives = false;
-            }
-            else
-            {
+            } else {
+                // Survived! Yay
+                photon.collapseToPath("A");
             }
         }
         else
         {
+            // DUD
         }
 
         if (!photonSurvives) return;
