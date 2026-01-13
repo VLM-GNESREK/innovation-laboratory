@@ -4,59 +4,42 @@ import at.technikumwien.qds.model.Photon;
 
 public class Detector {
 
-    private int detectionCount=0;   //misst ob photon ankommt und zaehlt mit
-    private String name;
-    private PathType Path;
+    private int detectionCount;
+    private final String name;
+    private final PathType path;
 
     public enum PathType {
         PathA,
         PathB
     }
 
-    public Detector(String name, PathType path){
-        this.name=name;
-        this.Path=path;
+    public Detector(String name, PathType path) {
+        this.name = name;
+        this.path = path;
     }
 
-    public Detector(String name){
+    public Detector(String name) {
         this(name, PathType.PathA);
     }
 
-    public boolean detect(Photon photon){
-        boolean detected;
-        if (Path==PathType.PathA) {
-            detected = photon.detectInPathA();
-        } else {
-            detected = photon.detectInPathB();
+    public boolean detect(Photon photon) {
+        boolean detected = (path == PathType.PathA)
+                ? photon.detectInPathA()
+                : photon.detectInPathB();
 
-        }
-
-        if(detected){
+        if (detected) {
             detectionCount++;
-            System.out.println(name + " detected in " + Path);
+            System.out.println(name + " detected in " + path);
         }
 
         return detected;
-    }
-
-    public int getDetectionCount(){
-        return detectionCount;
-    }
-
-    public String getName(){
-        return name;
     }
 
     public void reset() {
         detectionCount = 0;
     }
 
-    public PathType Path(){
-        return Path;
+    public void printStats() {
+        System.out.println(name + ": " + detectionCount);
     }
-
-    public void printStats(){
-        System.out.println( name + ": " + detectionCount);
-    }
-
 }
